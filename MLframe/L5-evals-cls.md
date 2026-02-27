@@ -31,9 +31,7 @@ True 0  FP      TN
 
 ## Accuracy
 ### Definition
-$$
-Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
-$$
+$$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$$
 Mäter: andel korrekta prediktioner av alla prediktioner
 
 **Nackdelar**:
@@ -46,9 +44,7 @@ En modell som säger "Ingen har diabetes" får 95000 rätt och 5000 fel, dvs 95%
 
 ## Precision:
 ### Definition:
-$$
-Precision = \frac{TP}{TP + FP}
-$$
+$$Precision = \frac{TP}{TP + FP}$$
 Mäter: av alla som modellen var positiva - hur många var faktiskt positiva?
 
 Precision är viktig när:
@@ -56,9 +52,7 @@ Precision är viktig när:
 - Exempel: spamfilter, juridiska beslut, vissa medicinska tester
 
 ## Recall (Sensitivity)
-$$
-Recall = \frac{TP}{TP + FN}
-$$
+$$Recall = \frac{TP}{TP + FN}$$
 Mäter: av alla som faktiskt är positiva, hur många fångade modellen?
 
 Viktig när:

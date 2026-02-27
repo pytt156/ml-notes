@@ -122,7 +122,7 @@ Ingen vikt uppdateras här, endast gradienterna beräknas.
 ### 5. optimizer.step()
 Nu uppdateras vikterna.
 
-En förenklas gradient descent: $$ w := w - lr ⋅ \frac{∂L}{∂w}$$
+En förenklas gradient descent: $$w := w - lr ⋅ \frac{∂L}{∂w}$$
 Adam gör mer:
 - håller rullande medelvärde av gradienter
 - håller rullande medelvärde av kvadrerade gradienter

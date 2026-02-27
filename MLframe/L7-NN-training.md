@@ -66,7 +66,10 @@ En **batch** är en delmängd av datasetet som skickas in till modellen åt gån
 En **epoch** = modellen har sett hela träningsdatasetet en gång.
 
 ### Antal uppdelningar per epoch
-Om datasetet har $N$ datapunkter: $$\text{steps per epoch} = \frac{N}{\text{batch\_size}} $$
+Om datasetet har $N$ datapunkter:
+```math
+\text{steps per epoch} = \frac{N}{\text{batch\_size}}
+```
 
 Exempel: $N = 1000$
 - Batch size = 10

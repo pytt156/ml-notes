@@ -82,3 +82,101 @@ Exempel: $N = 1000$
 ### Varför spelar batch size roll?
 - Mindre batch -> fler uppdateringar, mer "brus" i gradienterna, kan ibland generalisera bättre men kan vara instabilt
 - Större batch -> färre uppdateringar, stabilare gradient men kan kräva annan LR och kan ge sämre generalisering i vissa fall
+
+---
+
+## Training loop - struktur och ansvarsfördelning
+
+När vi faktiskt ska träna modellen behöver vi tre komponenter:
+1. **Model** - den paramentiserade funktionen $fθ​(x)$
+2. **Criterion (lossfunktion)** - mäter hur fel modellen har
+3. **Optimizer** - uppdaterar parametrarna baserat på gradienterna
+
+Exempel:
+```python
+model = MyModel()
+criterion = nn.CrossEntropyLoss() # klassifikation
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+```
+Viktigt att separera rollerna korrekt:
+- `loss.backward()` räknar ut gradienterna $\frac{dL}{dw}$
+- `optimizer.step()` uppdaterar vikterna
+- **Optimizer** är inte backprop - den använder bara resultatet
+
+## Learning rate - vad den faktiskt styr
+Learning rate ($η$) bestämmer hur stora steg vi tar i parametrerutrymmet:
+```math
+w_{ny} = w - η \frac{dL}{dw}
+```
+Om learning rate är:
+- För stor -> vi kan hoppa över minimum och träningen blir instabil
+- För liten -> konvergens går långsamt
+
+Ofta testar man tiopotenser (0.1,0.01,0.001 osv) eftersom gradientmagnituder ofta ligger i den skalan.
+
+## Själva träningsloopen
+En korrekt struktur per batch är:
+```python
+for _ in range(n_epochs):
+    for inputs, targets in dataloader:
+        optimizer.zero_grad() # töm gamla gradienter
+        outputs = model(inputs) # forward pass
+        loss = criterion(outputs, targets)
+        loss.backward() # beräkna gradienter
+        optimizer.step() # uppdatera vikter
+```
+## Gradienter
+Hur mycket förändras loss om vi ändrar vikten lite?
+```math
+\frac{dL}{dw}
+```
+Om:
+- $\frac{dL}{dw} > 0$ -> loss ökar om vikten ökar -> vi ska minska vikten
+- $\frac{dL}{dw} < 0$ -> loss minskar om vikten ökar -> vi ska öka vikten
+
+Därför subraherar vi gradienten i uppdateringen.
+
+När vi kör `loss.backward()` gör PyTorch:
+- Bygger en beräkningsgraf under forward pass
+- Använder kedjeregeln
+- Sparar gradienten i varje parameter som `param.grad`
+
+Exempel:
+```python
+for param in model.parameters():
+    print(param.grad)
+```
+Optimizer använder sen de värdena i `step()`.
+
+## Autodiff
+PyTorch använder **automatisk differentiering**, inte numerisk approximation.
+
+Under forward pass skapas en dynamisk beräkningsgraf. När vi anropar `backward()` traverseras grafen baklänges och kedjeregeln appliceras systematiskt. Det gör att vi slipper räkna derivator manuellt, även för mycket djupa nätverk.
+
+## Loss vs. Accuracy
+
+Accuracy:
+```math
+\frac{\text{antal rätt}}{\text{antal exempel}}
+```
+Loss:
+- Är det som ska optimeras
+- Är deriverbar
+- Kan ta många värden (inte begränsad till 0-1)
+
+Loss och accuracy behöver inte röra sig proportionellt. Det är möjligt att loss minskar medan accuracy är oförändrad, eftersom loss tar hänsyn till hur säkra prediktionerna är.
+
+## Checkpoints och overfitting
+Om modellen tränas länge kan den börja överanpassa (overfitting).
+
+Eftersom vikterna uppdateras kontinuerligt kan vi inte "backa i tiden" om vi inte har sparat modellen.
+
+Därför används checkpoints:
+```python
+torch.save(model.state_dict(), "checkpoint.pt")
+```
+Man sparar:
+- Vid fasta intervall
+- Eller när validerings-loss förbättras
+
+Det är särskilt viktigt när träning tar lång tid. Early stopping är en metod där man avbryter träningen när validerings-loss slutar förbättras.

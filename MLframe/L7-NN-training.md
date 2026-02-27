@@ -3,7 +3,10 @@
 ## Neuralt nätverk: lager, noder och kopplingar
 ### Input lager
 - Input lagret har lika många noder som antal _features_ (kolumner) i datan
-- En rad i datan (en observation) matas in som en vektor: $$x \in \mathbb{R}^{\text{antal\_features}}$$
+- En rad i datan (en observation) matas in som en vektor:
+```math
+x \in \mathbb{R}^{\text{antal\_features}}
+```
 ### Output lager
 - **Klassifikation**: output-lagret har ofta lika många noder som antal klasser. Ex: 3 klasser -> 3 output-noder
 - **Regression**: output-lagret har ofta 1 nod (ett numeriskt värde)

@@ -72,9 +72,142 @@ En viktig poäng är att problemdefinition och datainventering ofta påverkar va
 Detta steg kan ta mycket lång tid. "Measure twice, cut once" gäller här. En feldefinierad metric eller fel problemformulering skapar problem i alla senare steg.
 
 ## 2. Data acquisition
+När problem och databehov är definerade går man vidare till att faktiskt samla in och strukturera datan.
+
+Detta innefattar:
+- Datainsamling
+- Labeling
+- Governance
+- Versionshantering
+- Provenance (ursprungsspårning)
+
+### Datainsamling och ETL
+Här systematiserar man: **Extract, Transform, Load**
+
+I odlingsexemplet kan det innebära:
+- Hämta GPS-data
+- Hämta externa markdatafiler
+- Transformera till rätt format
+- Lagra i databas eller data warehouse
+
+Ett data warehouse är ofta att föredra eftersom det möjliggör strukturerad åtkomst till rätt data i rätt format.
+
+Exempel på pipeline:
+Data → Python/Fivetran → Data warehouse → ML
+
+Fivetran är ett exempel på ett verktyg för data ingestion.
+
+### Labeling
+Labeling är ofta mer komplext än vad man tror. <br>
+Kundfeedback är sällan baar "positiv/negativ". Det kan behövas labels som:
+- Produkt
+- Personal
+- Atmosfär
+- Service
+- Tonläge
+- Grad av nöjdhet
+
+Det kan bli ett stort manuellt arbete.
+
+### Metadata och versionering
+Att hålla koll på (detta är avgörande):
+- Var datan kommer ifrån
+- När den ändrades
+- Vilken version som ändrades
+
+Det finns hela företag som specialiserar sig på metadata management. <br>
+I mindre projekt gör man en rimlig insats, t.ex:
+- DVC för data-versionering
+- Tydliga datascript
+- Lagrad experimenthistorik
 
 ## 3. Experimenting
+Nu börjar den klassiska data science-delen. <br>
+Här jobbar man ofta i notebooks med:
+- EDA
+- Visualiseringar
+- Feature Engineering
+- Modellval
+- Hyperparametertuning
+
+Men i MLOps-sammanhang är det viktigt att detta inte blir "ad hoc".
+
+Man bör:
+- Separera kod i .py-filer
+- Anropa funktioner från notebook
+- Spara hyperparametrar
+- Logga experiment
+- Kunna återskapa varje körning
+
+I odlingsexemplet:
+- Läs data från warehouse
+- Bygg träningsscript
+- Experimentera med olika modeller
+- Spara varje modellversion
+- Spara metrics och parametrar
+
+Detta möjliggör jämförelse och återanvändning
 
 ## 4. Träning och validering
+Här formaliseras det som experimenteringen visat fungerar.
+
+Man:
+- Tränar modellen i kontrollerad miljö
+- Sparar träningsdata tillsammans med modellen
+- Jämför mot baseline
+
+Baseline är viktigt. Man sparar ofta den bästa modellen hittills och jämför nya modeller mot den.
+
+När en modell är tillräckligt mycket bättre (enligt fördefinerade kriterier) kan den "promoveras".
+
+Det är viktigt att:
+- Promotion criteria är definerade i förväg
+- Man inte byter modell baserat på känsla
+
+I detta steg förbereds modellen för produktion.
 
 ## 5. Packaging & deployment
+Nu görs modellen produktionsklar.
+
+Det kan innebära:
+- Dockerisering
+- Export till TorchScript
+- Export till ONNX
+- API-exponering (FastAPI)
+
+Ofta sätts CI/CD upp.
+
+Exempel:
+- Merge till main triggar GitHub Actions
+- Bygger Docker-image
+- Deployar till EC2
+
+Målet är att modellen ska uppdateras automatiskt när kod uppdateras.
+
+Ett viktigt MLOps-krav är spårbarhet:
+- Vilken kodversion?
+- Vilken dataversion?
+- Vilken modell?
+- Vilken container?
+
+Allt ska vara förståeligt och reproducerbart.
+
+## Rollen som MLOps Engineer
+En MLOps Engineer är ofta involverad i hela kedjan, men gör inte nödvändigtvis allt själv.
+
+Samarbeten:
+- Data Engineers (datapipeliners)
+- Data Scientists (modellutveckling)
+- Backend engineers (API)
+- DevOps (infrastruktur)
+
+I små bolag gör man mer själv. <br>
+I större organisationer kan man vara mer fokuserad på början (problem + struktur) eller slutet (development + monitorering).
+
+## Övergripande princip
+Det viktigaste i ett MLOps-flöde är:
+- Reproducerbarhet
+- Spårbarhet
+- Struktur
+- Tydlighet
+- Automatisering
